@@ -108,6 +108,7 @@ class Game extends React.Component {
                 squares: Array(9).fill(null),
                 position: null,
                 winnerSpots: Array(9).fill(false),
+                isDraw: false,
             }],
             xIsNext: true,
             stepNumber: 0,
@@ -120,6 +121,7 @@ class Game extends React.Component {
         const current = history[history.length - 1];
         const squares = current.squares.slice();
         const winnerSpots = current.winnerSpots.slice();
+        let isDraw = false;
         if(squares[i] || calculateWinner(squares)){
             return;
         }
@@ -130,11 +132,15 @@ class Game extends React.Component {
                 winnerSpots[won[1][j]] = true;
             }
         }
+        if(checkforDraw(squares) && (calculateWinner(squares) ? false : true)){
+            isDraw = true;
+        }
         this.setState({
             history: history.concat([{
                 squares: squares,
                 position: i,
                 winnerSpots: winnerSpots,
+                isDraw: isDraw,
             }]),           
             xIsNext: !this.state.xIsNext,
             stepNumber: history.length,
@@ -174,10 +180,14 @@ class Game extends React.Component {
         }); 
 
 
-       let status;
+        let status;
         if (winner) {
             status = 'Winner: ' + winner[0];
-        } else {
+        } 
+        else if(current.isDraw){
+            status = 'Draw'
+        }
+        else {
             status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
         }
 
@@ -233,3 +243,16 @@ function calculateWinner(squares) {
     }
     return null;
 }
+
+
+
+function checkforDraw(squares){
+    console.log(squares);
+    for(let i=0;i<squares.length;i++){
+        if(squares[i]==null){
+            console.log("34r5");
+            return false;
+        }
+    }
+    return true;
+} 
